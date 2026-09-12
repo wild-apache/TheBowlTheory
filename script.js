@@ -1,30 +1,14 @@
-const CONFIG={SWIGGY_URL:"",ZOMATO_URL:"",INSTAGRAM_URL:"",CONTACT_URL:""};
-const menu=[
- {name:"Tamarind Pulihora",cat:"rice",desc:"Tangy, nutty and comforting.",signature:true},
- {name:"Lemon Pulihora",cat:"rice",desc:"Bright, familiar and fresh."},
- {name:"Zeera Rice",cat:"rice",desc:"Fragrant cumin-seasoned rice."},
- {name:"Tomato Rice",cat:"rice",desc:"Warm, homely tomato rice."},
- {name:"Kothimeera Rice",cat:"rice",desc:"Fresh coriander-led comfort."},
- {name:"Pudina Rice",cat:"rice",desc:"Aromatic mint rice."},
- {name:"Pappu Charu Rice",cat:"rice",desc:"Rice with a comforting Andhra classic."},
- {name:"Pappu Aavakai Rice",cat:"rice",desc:"A familiar pairing with character."},
- {name:"Curd Rice",cat:"rice",desc:"Cool, simple and comforting."},
- {name:"Chicken Pulav",cat:"chicken",desc:"A hearty bowl of fragrant rice and chicken."},
- {name:"Chicken Fry",cat:"chicken",desc:"Crisp, spiced chicken."},
- {name:"Chicken Fry Piece Biriyani",cat:"chicken",desc:"A generous biriyani bowl."},
- {name:"Bagara Rice + Veg Curry",cat:"chicken",desc:"Fragrant rice with a vegetable curry."},
- {name:"Omelette Variants",cat:"egg",desc:"Simple egg favourites, made to order."}
+const CONFIG = { SWIGGY_URL: "", ZOMATO_URL: "", INSTAGRAM_URL: "", CONTACT_URL: "" };
+const MENU = [
+["Tamarind Pulihora","rice","Tangy, nutty and comforting.",true],["Lemon Pulihora","rice","Bright, familiar and fresh."],["Zeera Rice","rice","Fragrant cumin-seasoned rice."],["Tomato Rice","rice","Warm, homely tomato rice."],["Kothimeera Rice","rice","Fresh coriander-led comfort."],["Pudina Rice","rice","Aromatic mint rice."],["Pappu Charu Rice","rice","Rice with a comforting Andhra classic."],["Pappu Aavakai Rice","rice","A familiar pairing with character."],["Curd Rice","rice","Cool, simple and comforting."],["Chicken Pulav","chicken","A hearty bowl of fragrant rice and chicken."],["Chicken Fry","chicken","Crisp, spiced chicken."],["Chicken Fry Piece Biriyani","chicken","A generous biriyani bowl."],["Bagara Rice + Veg Curry","chicken","Fragrant rice with a vegetable curry."],["Omelette Variants","egg","Simple egg favourites, made to order."]
 ];
-const list=document.getElementById("menuList");
-function renderMenu(filter="all"){
- const items=filter==="all"?menu:menu.filter(x=>x.cat===filter);
- list.innerHTML=items.map((x,i)=>`<article class="menu-item"><span class="menu-index">${String(i+1).padStart(2,"0")}</span><div><div class="menu-name">${x.name}${x.signature?" <small style=\"font:700 .55rem Manrope;letter-spacing:.1em;color:var(--terracotta)\">SIGNATURE</small>":""}</div><div class="menu-desc">${x.desc}</div></div><span class="menu-price">₹XX</span></article>`).join("");
-}
+const grid=document.getElementById("menuGrid");
+function renderMenu(filter="all"){if(!grid)return;const items=filter==="all"?MENU:MENU.filter(x=>x[1]===filter);grid.innerHTML=items.map((x,i)=>`<article class="menu-item"><span class="menu-index">${String(i+1).padStart(2,"0")}</span><div><div class="menu-name">${x[0]}${x[3]?'<small class="signature-label">OUR SIGNATURE</small>':''}</div><div class="menu-desc">${x[2]}</div></div><span class="menu-price">₹XX</span></article>`).join("");}
 renderMenu();
-document.querySelectorAll(".tabs button").forEach(btn=>btn.addEventListener("click",()=>{document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active"));btn.classList.add("active");renderMenu(btn.dataset.filter)}));
-
-document.querySelectorAll("[data-config]").forEach(el=>{const key=el.dataset.config;const value=CONFIG[key];if(value){el.href=value;el.target="_blank";el.rel="noopener"}else{el.addEventListener("click",e=>e.preventDefault());el.setAttribute("aria-label",`${key} placeholder — add URL in script.js`)}});
-const menuButton=document.getElementById("menuButton"),mobileNav=document.getElementById("mobileNav");
-menuButton.addEventListener("click",()=>{const open=mobileNav.classList.toggle("open");menuButton.setAttribute("aria-expanded",String(open));mobileNav.setAttribute("aria-hidden",String(!open))});
-mobileNav.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>{mobileNav.classList.remove("open");menuButton.setAttribute("aria-expanded","false");mobileNav.setAttribute("aria-hidden","true")}));
-// Deliberately no scroll-driven animation, scroll hijacking, parallax or animation library.
+document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");renderMenu(b.dataset.filter||"all");}));
+document.querySelectorAll("[data-config]").forEach(a=>{const v=CONFIG[a.dataset.config];if(v){a.href=v;a.target="_blank";a.rel="noopener noreferrer";}else a.addEventListener("click",e=>e.preventDefault());});
+const button=document.getElementById("menuButton"),nav=document.getElementById("mobileNav");
+if(button&&nav){button.addEventListener("click",()=>{const open=nav.classList.toggle("open");button.setAttribute("aria-expanded",open);nav.setAttribute("aria-hidden",!open);});nav.querySelectorAll("a[href^='#']").forEach(a=>a.addEventListener("click",()=>{nav.classList.remove("open");button.setAttribute("aria-expanded","false");nav.setAttribute("aria-hidden","true");}));}
+/* Section navigation: explicit smooth scrolling, with no scroll-jacking. */
+document.querySelectorAll("a[href^='#']").forEach(a=>{if(a.dataset.config||a.closest(".tabs"))return;a.addEventListener("click",e=>{const id=a.getAttribute("href");if(!id||id==="#")return;const target=document.querySelector(id);if(!target)return;e.preventDefault();const y=target.getBoundingClientRect().top+window.scrollY-80;window.scrollTo({top:y,behavior:"smooth"});});});
+const note=document.getElementById("ingredientNote");document.querySelectorAll(".cloud-tag").forEach(t=>t.addEventListener("click",()=>{document.querySelectorAll(".cloud-tag").forEach(x=>x.classList.remove("active"));t.classList.add("active");if(note)note.textContent=t.dataset.copy||"";}));
