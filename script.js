@@ -1,1 +1,30 @@
-const CONFIG={SWIGGY_URL:"",ZOMATO_URL:"",INSTAGRAM_URL:"",CONTACT_URL:""};const menu=[["Tamarind Pulihora","rice"],["Lemon Pulihora","rice"],["Zeera Rice","rice"],["Tomato Rice","rice"],["Kothimeera Rice","rice"],["Pudina Rice","rice"],["Pappu Charu Rice","rice"],["Pappu Aavakai Rice","rice"],["Curd Rice","rice"],["Chicken Pulav","chicken"],["Chicken Fry","chicken"],["Chicken Fry Piece Biriyani","chicken"],["Bagara Rice + Veg Curry","chicken"],["Omelette Variants","egg"]];const grid=document.querySelector('#menuGrid');function render(cat='all'){grid.innerHTML=menu.filter(x=>cat==='all'||x[1]===cat).map(([name,type])=>`<article class="menu-item"><span class="eyebrow">${type==='rice'?'Rice':type==='chicken'?'Chicken':'Egg'}</span><h3>${name}</h3><p class="muted">Freshly prepared. Price to be added.</p><div class="price">₹XX</div></article>`).join('')}render();document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active');render(b.dataset.cat)}));const header=document.querySelector('#header');const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;addEventListener('scroll',()=>{header.classList.toggle('scrolled',scrollY>30);if(reduced)return;const hero=document.querySelector('.hero'),p=Math.min(1,Math.max(0,(scrollY-100)/(hero.offsetHeight*.78)));const tx=[[-160,140],[150,120],[-120,80],[130,70],[0,120],[-20,60]];document.querySelectorAll('.ingredient').forEach((el,i)=>{const [x0,y0]=tx[i],x=x0*(1-p),y=y0*(1-p),s=.94+.18*p,r=(i%2?8:-8)*(1-p);el.style.transform=`translate3d(${x}px,${y}px,0) scale(${s}) rotate(${r}deg)`});document.querySelector('.steam').style.opacity=p>.86?(p-.86)*7:0},{passive:true});document.querySelectorAll('.cloud-tag').forEach(t=>t.addEventListener('click',()=>{document.querySelectorAll('.cloud-tag').forEach(x=>x.classList.remove('active'));t.classList.add('active');document.querySelector('#ingredientNote').textContent=t.dataset.copy}));document.querySelectorAll('[data-config]').forEach(a=>{const key=a.dataset.config,url=CONFIG[key];if(url)a.href=url;else a.addEventListener('click',e=>{e.preventDefault();alert(`${key} is ready to be configured in script.js.`)})});const toggle=document.querySelector('.menu-toggle'),nav=document.querySelector('.nav');toggle?.addEventListener('click',()=>{const open=toggle.getAttribute('aria-expanded')==='true';toggle.setAttribute('aria-expanded',String(!open));nav.style.display=open?'none':'flex';nav.style.position='absolute';nav.style.right='18px';nav.style.top='64px';nav.style.background='var(--cream)';nav.style.padding='18px';nav.style.flexDirection='column';nav.style.border='1px solid var(--line)';nav.style.color='var(--espresso)'})
+const CONFIG={SWIGGY_URL:"",ZOMATO_URL:"",INSTAGRAM_URL:"",CONTACT_URL:""};
+const menu=[
+ {name:"Tamarind Pulihora",cat:"rice",desc:"Tangy, nutty and comforting.",signature:true},
+ {name:"Lemon Pulihora",cat:"rice",desc:"Bright, familiar and fresh."},
+ {name:"Zeera Rice",cat:"rice",desc:"Fragrant cumin-seasoned rice."},
+ {name:"Tomato Rice",cat:"rice",desc:"Warm, homely tomato rice."},
+ {name:"Kothimeera Rice",cat:"rice",desc:"Fresh coriander-led comfort."},
+ {name:"Pudina Rice",cat:"rice",desc:"Aromatic mint rice."},
+ {name:"Pappu Charu Rice",cat:"rice",desc:"Rice with a comforting Andhra classic."},
+ {name:"Pappu Aavakai Rice",cat:"rice",desc:"A familiar pairing with character."},
+ {name:"Curd Rice",cat:"rice",desc:"Cool, simple and comforting."},
+ {name:"Chicken Pulav",cat:"chicken",desc:"A hearty bowl of fragrant rice and chicken."},
+ {name:"Chicken Fry",cat:"chicken",desc:"Crisp, spiced chicken."},
+ {name:"Chicken Fry Piece Biriyani",cat:"chicken",desc:"A generous biriyani bowl."},
+ {name:"Bagara Rice + Veg Curry",cat:"chicken",desc:"Fragrant rice with a vegetable curry."},
+ {name:"Omelette Variants",cat:"egg",desc:"Simple egg favourites, made to order."}
+];
+const list=document.getElementById("menuList");
+function renderMenu(filter="all"){
+ const items=filter==="all"?menu:menu.filter(x=>x.cat===filter);
+ list.innerHTML=items.map((x,i)=>`<article class="menu-item"><span class="menu-index">${String(i+1).padStart(2,"0")}</span><div><div class="menu-name">${x.name}${x.signature?" <small style=\"font:700 .55rem Manrope;letter-spacing:.1em;color:var(--terracotta)\">SIGNATURE</small>":""}</div><div class="menu-desc">${x.desc}</div></div><span class="menu-price">₹XX</span></article>`).join("");
+}
+renderMenu();
+document.querySelectorAll(".tabs button").forEach(btn=>btn.addEventListener("click",()=>{document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active"));btn.classList.add("active");renderMenu(btn.dataset.filter)}));
+
+document.querySelectorAll("[data-config]").forEach(el=>{const key=el.dataset.config;const value=CONFIG[key];if(value){el.href=value;el.target="_blank";el.rel="noopener"}else{el.addEventListener("click",e=>e.preventDefault());el.setAttribute("aria-label",`${key} placeholder — add URL in script.js`)}});
+const menuButton=document.getElementById("menuButton"),mobileNav=document.getElementById("mobileNav");
+menuButton.addEventListener("click",()=>{const open=mobileNav.classList.toggle("open");menuButton.setAttribute("aria-expanded",String(open));mobileNav.setAttribute("aria-hidden",String(!open))});
+mobileNav.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>{mobileNav.classList.remove("open");menuButton.setAttribute("aria-expanded","false");mobileNav.setAttribute("aria-hidden","true")}));
+// Deliberately no scroll-driven animation, scroll hijacking, parallax or animation library.
